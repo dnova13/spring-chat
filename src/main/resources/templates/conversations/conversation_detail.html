@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <title>chat</title>
+    <style type="text/css">#_copy {
+        align-items: center;
+        background: #4494d5;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        font-size: 13px;
+        height: 30px;
+        justify-content: center;
+        position: absolute;
+        width: 60px;
+        z-index: 1000
+    }
+
+    #select-tooltip, #sfModal, .modal-backdrop, div[id^=reader-helper] {
+        display: none !important
+    }
+
+    .modal-open {
+        overflow: auto !important
+    }
+
+    ._sf_adjust_body {
+        padding-right: 0 !important
+    }
+
+    .enable_copy_btns_div {
+        position: fixed;
+        width: 154px;
+        left: 10px;
+        top: 45%;
+        background: #e7f1ff;
+        border: 2px solid #4595d5;
+        font-weight: 600;
+        border-radius: 2px;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+        z-index: 5000
+    }
+
+    .enable_copy_btns_logo {
+        width: 100%;
+        background: #4595d5;
+        text-align: center;
+        font-size: 12px;
+        color: #e7f1ff;
+        line-height: 30px;
+        height: 30px
+    }
+
+    .enable_copy_btns_btn {
+        display: block;
+        width: 128px;
+        height: 28px;
+        background: #7f5711;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 12px;
+        border: 0;
+        outline: 0;
+        margin: 8px auto;
+        font-weight: 700;
+        cursor: pointer;
+        opacity: .9
+    }
+
+    .enable_copy_btns_btn:hover {
+        opacity: .8
+    }
+
+    .enable_copy_btns_btn:active {
+        opacity: 1
+    }</style>
+</head>
+<body class="text-gray-800 mt-10 font-light" inmaintabuse="1" cz-shortcut-listen="true">
+
+<div th:include="/partials/header"></div>
+
+<div id="{{ conversation.pk }}" class="conv container mx-auto my-10 mt-20 flex justify-between min-h-50vh">
+    <div class="border w-1/4 p-10 ">
+        <span class="text-center w-full block text-lg font-medium break-words">대화</span>
+        <div class="flex justify-center mt-10 items-center">
+            <div class="flex flex-col items-center">
+                <div th:if="${user.avatar == null or user.avatar.trim().length() < 1}"
+                     class="w-8vw h-8vw bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+                    <span class="text-3xl" th:text="${#strings.substring(user.firstName, 0, 1)}"></span>
+                </div>
+                <div th:if="${user.avatar.trim().length() > 0}" class="w-8vw h-8vw rounded-full bg-cover"
+                     th:style="'background-image: url(' + ${user.avatar} + ');'">
+                </div>
+                <span class="mt-2 text-gray-500 " th:text="${user.username}"></span>
+            </div>
+
+            <span class="font-medium text-2xl">&</span>
+
+            <div class="flex flex-col items-center">
+
+                <div th:if="${opponent.avatar == null or opponent.avatar.trim().length() < 1}"
+                     class="w-8vw h-8vw bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+                    <span class="text-3xl" th:text="${#strings.substring(opponent.firstName, 0, 1)}"></span>
+                </div>
+                <div th:if="${opponent.avatar.trim().length() > 0}" class="w-8vw h-8vw rounded-full bg-cover"
+                     th:style="'background-image: url(' + ${opponent.avatar} + ');'">
+                </div>
+                <span class="mt-2 text-gray-500 " th:text="${opponent.username}"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex-grow">
+        <div class="chat-scroll border ml-10 p-10 pb-0 flex flex-col">
+            <!--             메시지 개수가 0일때-->
+            <!--            {% if conversation.messages.count == 0 %}-->
+            <!--            <span class="no-msg pb-10">{% trans "no messages" %}</span>-->
+            <!--            {% else %}-->
+
+            <!--            메시지 개수가 그 이상 일떄-->
+            <!--            {% for message in conv_messages|dictsort:"id" %}-->
+            <!--            <div class="conv-msg mb-10 {% if message.user.pk == user.pk %}-->
+            <!--                            self-end text-right-->
+            <!--                        {% endif %}">-->
+            <div class="conv-msg mb-10">
+                <!--                <span class="text-sm font-medium  w-56 text-gray-600 truncate">{{message.user.first_name | slice:12}}{% if message.user.first_name|length > 12 %}...{% endif %}</span>-->
+                <!--                사용자명-->
+                <span class="text-sm font-medium  w-56 text-gray-600 truncate">상대11</span>
+                <div class="mt-px p-5 w-56 rounded break-words text-left bg-gray-300">
+                    상대 메세지
+                </div>
+                <p class="text-xs">
+                    2024년 10월 18일 오후 6:39
+                    <!--                    {% if LANGUAGE_CODE == "en" %}-->
+                    <!--                    {{ message.created|date:"M. j Y, h:i a" }}-->
+                    <!--                    {% elif LANGUAGE_CODE == "ko" %}-->
+                    <!--                    {{ message.created|date:"Y년 m월 j일 a f" }}-->
+                    <!--                    {% else %}-->
+                    <!--                    {{ message.created }}-->
+                    <!--                    {% endif %}-->
+                </p>
+                <!--                {% if message.user.pk == user.pk %}-->
+                <!--                {% if message.is_read == False %}-->
+                <!--                <p class="is-read text-xs">1</p>-->
+                <!--                {% endif %}-->
+                <!--                {% endif %}-->
+            </div>
+
+            <div class="conv-msg mb-10 self-end text-right">
+                <!--                <span class="text-sm font-medium  w-56 text-gray-600 truncate">{{message.user.first_name | slice:12}}{% if message.user.first_name|length > 12 %}...{% endif %}</span>-->
+                <!--                사용자명-->
+                <span class="text-sm font-medium  w-56 text-gray-600 truncate">나1</span>
+                <div class="mt-px p-5 w-56 rounded break-words text-left bg-teal-500 text-white">
+                </div>
+                <p class="text-xs">
+                    2024년 10월 18일 오후 6:39
+                    <!--                    {% if LANGUAGE_CODE == "en" %}-->
+                    <!--                    {{ message.created|date:"M. j Y, h:i a" }}-->
+                    <!--                    {% elif LANGUAGE_CODE == "ko" %}-->
+                    <!--                    {{ message.created|date:"Y년 m월 j일 a f" }}-->
+                    <!--                    {% else %}-->
+                    <!--                    {{ message.created }}-->
+                    <!--                    {% endif %}-->
+                </p>
+                <!--                {% if message.user.pk == user.pk %}-->
+                <!--                {% if message.is_read == False %}-->
+                <p class="is-read text-xs">1</p>
+                <!--                {% endif %}-->
+                <!--                {% endif %}-->
+            </div>
+            <!--            {% endfor %}-->
+            <!--            {% endif %}-->
+        </div>
+        <form class="mt-10 w-1/2 mx-auto" method="POST">
+            <!--            <input type="hidden" th:name = "csrfmiddlewaretoken" th:value="${_csrf.token}" />-->
+            <input class="border-box mb-5" name="message" placeholder="Write a Message" required/>
+            <button id="send_msg" class="btn-link">Send Comment</button>
+        </form>
+    </div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js" defer></script>
+<script>
+    let loc = "ko"
+
+    // user.pk
+    const _id = [[${user.id}]]
+    //opponent.pk
+    const _id_op = [[${opponent.id}]]
+    const _name = "[[${user.firstName}]]"
+
+    moment.locale(loc)
+</script>
+<script th:src="@{/js/socket_coversation.js}" defer></script>
+<script th:src="@{/js/ajax_call.js}" defer></script>
+<script th:src="@{/js/socket.js}" defer></script>
+<!--    <script src="{% url 'javascript-catalog' %}"></script>-->
+
+
+<!--    <script src="{% static 'js/socket_coversation.js' %}"></script>-->
+<!--    <script src="{% static 'js/ajax_call.js' %}"></script>-->
+<!--    <script src="{% static 'js/socket.js' %}"></script>-->
+<!--    <script src="{% url 'javascript-catalog' %}"></script>-->
+
+</body>
+</html>

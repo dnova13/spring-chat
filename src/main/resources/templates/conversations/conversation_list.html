@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <title>chat</title>
+    <style type="text/css">#_copy {
+        align-items: center;
+        background: #4494d5;
+        border-radius: 3px;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        font-size: 13px;
+        height: 30px;
+        justify-content: center;
+        position: absolute;
+        width: 60px;
+        z-index: 1000
+    }
+
+    #select-tooltip, #sfModal, .modal-backdrop, div[id^=reader-helper] {
+        display: none !important
+    }
+
+    .modal-open {
+        overflow: auto !important
+    }
+
+    ._sf_adjust_body {
+        padding-right: 0 !important
+    }
+
+    .enable_copy_btns_div {
+        position: fixed;
+        width: 154px;
+        left: 10px;
+        top: 45%;
+        background: #e7f1ff;
+        border: 2px solid #4595d5;
+        font-weight: 600;
+        border-radius: 2px;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Helvetica Neue, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+        z-index: 5000
+    }
+
+    .enable_copy_btns_logo {
+        width: 100%;
+        background: #4595d5;
+        text-align: center;
+        font-size: 12px;
+        color: #e7f1ff;
+        line-height: 30px;
+        height: 30px
+    }
+
+    .enable_copy_btns_btn {
+        display: block;
+        width: 128px;
+        height: 28px;
+        background: #7f5711;
+        border-radius: 4px;
+        color: #fff;
+        font-size: 12px;
+        border: 0;
+        outline: 0;
+        margin: 8px auto;
+        font-weight: 700;
+        cursor: pointer;
+        opacity: .9
+    }
+
+    .enable_copy_btns_btn:hover {
+        opacity: .8
+    }
+
+    .enable_copy_btns_btn:active {
+        opacity: 1
+    }</style>
+</head>
+<body class="text-gray-800 mt-10 font-light" inmaintabuse="1" cz-shortcut-listen="true">
+
+<div th:include="/partials/header"></div>
+
+<div class="container mx-auto my-10 mt-20 flex justify-between min-h-50vh">
+    <div class="border w-1/4 p-10 ">
+        <span class="text-center w-full block text-lg font-medium">대화</span>
+        <div class="justify-between mx-auto mt-10 items-center">
+            <div class="flex flex-col items-center">
+
+                <div th:if="${user.avatar == null or user.avatar.trim().length() < 1}" class="h-20 w-20 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+                    <span class="text-3xl" th:text="${#strings.substring(user.firstName, 0, 1)}"></span>
+                </div>
+
+                <div th:if="${user.avatar.trim().length() > 0}" class="h-20 w-20 rounded-full bg-cover"
+                     th:style="'background-image: url(' + ${user.avatar} + ');'">
+                </div>
+
+                <span class="mt-2 text-gray-500 " th:text="${user.username}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- chat message -->
+    <div class="flex-grow">
+        <div id="reserv-section" class="conv-scroll border ml-10 p-10 flex flex-col">
+            <div th:each="room : ${room_list}" class="flax items-center mb-2 p-4 rounded-lg font-light text-lg w-full text-black bg-yellow-200 hover:bg-yellow-100">
+                <a th:id="${room.id}" class="convs flex items-center" th:href="@{/conversations/{id}(id=${room.id})}">
+
+
+                    <div th:if="${room.opponent.avatar == null or room.opponent.avatar.trim().length() < 1}"
+                         class="h-11 w-11 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+                        <span class="text-3xl" th:text="${#strings.substring(room.opponent.firstName, 0, 1)}"></span>
+                    </div>
+                    <div th:if="${room.opponent.avatar.trim().length() > 0}" class="h-11 w-11 rounded-full bg-cover"
+                         th:style="'background-image: url(' + ${room.opponent.avatar} + ');'">
+                    </div>
+
+<!--                    <div class="h-11 w-11 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">-->
+<!--                        <span class="text-3xl" th:text="${#strings.substring(room.opponent.firstName, 0, 1)}"></span>-->
+<!--                    </div>-->
+
+                    <div class="ml-5 w-full overflow-hidden">
+                        <p class="flex items-center font-bold" th:text="${room.opponent.username}"></p>
+                        <p class="text-sm truncate" th:if="${room.message != null}">
+                            <span th:if="${room.message.length() <= 40}" th:text="${room.message}"></span>
+                            <span th:if="${room.message.length() > 40}" th:text="${#strings.substring(room.message, 0, 40)} + '...'"></span>
+                        </p>
+                        <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
+                    </div>
+                    <span th:if="${room.isRead == false}" class="flex text-right text-sm text-red-500">●</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
