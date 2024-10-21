@@ -23,4 +23,6 @@ public interface ChatRepository {
     Tuple findChatOpponetInfo(Long chatRoomId, Long userId);
 
     List<Tuple> findChatMessageById(Long chatRoomId, int limit, int offset);
+
+    Long getTotalChatMessageById(Long chatRoomId);
 }

@@ -9,10 +9,8 @@ import jj.chat_spring.domain.ChatParticipants;
 import jj.chat_spring.domain.ChatRoom;
 import jj.chat_spring.domain.ChatRoomDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -51,7 +49,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     @Override
     public Boolean updateChatMessageRead(Long chatRoomId, Long userId) {
 
-        String jpql = "UPDATE ChatMessage cm SET cm.isRead = true WHERE cm.roomId = :roomId AND cm.userId = :userId";
+        String jpql = "UPDATE ChatMessage cm SET cm.isRead = true WHERE cm.roomId = :roomId AND cm.userId != :userId";
 
         int updatedCount = em.createQuery(jpql)
                 .setParameter("roomId", chatRoomId)
@@ -143,5 +141,21 @@ public class ChatRepositoryImpl implements ChatRepository {
 //                "order by cm.id desc ";
 
 
+    }
+
+
+    @Override
+    public Long getTotalChatMessageById(Long chatRoomId) {
+        String jpql =
+                """
+                    select count (cm)
+                    from ChatMessage cm
+                    where cm.roomId = :roomId
+                    """;
+
+
+        return em.createQuery(jpql, Long.class)
+                .setParameter("roomId", chatRoomId)
+                .getSingleResult();
     }
 }

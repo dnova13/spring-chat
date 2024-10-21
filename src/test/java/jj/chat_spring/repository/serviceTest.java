@@ -31,6 +31,9 @@ public class serviceTest {
 
         List<ChatRoomDto> roomList = chatService.getChatRoomListByUserId(userId);
         System.out.println(roomList);
+
+
+        System.out.println(chatService.getChatMessageListByRoomId(1L, 3, 0));
     }
 
     @Test

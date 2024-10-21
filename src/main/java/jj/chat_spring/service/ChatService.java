@@ -8,6 +8,8 @@ import jj.chat_spring.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatService {
@@ -77,7 +79,38 @@ public class ChatService {
         return roomList;
     }
 
-//    public List<ChatMessageDto> getChatMessageListByRoomId(Long roomId) {
-//
-//    }
+    public List<ChatMessageDto> getChatMessageListByRoomId(Long roomId, int limit, int offset) {
+
+        List<Tuple> resultList = chatRepository.findChatMessageById(roomId, limit, offset);
+
+        List<ChatMessageDto> messageList = new ArrayList<>();
+
+        for (Tuple result : resultList) {
+
+            ChatMessageDto chatMessageDto = new ChatMessageDto();
+            UserSimpleDto userSimpleDto = new UserSimpleDto();
+
+            chatMessageDto.setId(result.get(0, Long.class));
+            chatMessageDto.setMessage(result.get(1, String.class));
+            chatMessageDto.setRoomId(result.get(2, Long.class));
+            chatMessageDto.setRead(result.get(3, Boolean.class));
+            chatMessageDto.setCreatedAt(result.get(4, LocalDateTime.class));
+            chatMessageDto.setUpdatedAt(result.get(5, LocalDateTime.class));
+
+
+            userSimpleDto.setId(result.get(6, Long.class));
+            userSimpleDto.setUsername(result.get(7, String.class));
+            userSimpleDto.setAvatar(result.get(8, String.class));
+            userSimpleDto.setFirstName(result.get(9, String.class));
+            userSimpleDto.setLastName(result.get(10, String.class));
+            userSimpleDto.setEmail(result.get(11, String.class));
+
+            chatMessageDto.setUser(userSimpleDto);
+
+            messageList.add(chatMessageDto);
+        }
+
+        return messageList;
+    }
+
 }

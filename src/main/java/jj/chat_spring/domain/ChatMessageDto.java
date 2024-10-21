@@ -1,5 +1,6 @@
 package jj.chat_spring.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ public class ChatMessageDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+//    @JsonProperty("userInfo") // 원하는 이름으로 변경
     private UserSimpleDto user;
 
     public ChatMessageDto() {}

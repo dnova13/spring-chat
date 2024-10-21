@@ -24,23 +24,23 @@ public class RepositoryTest {
     @Test
     public void initChatSetting() {
 
-        System.out.println(chatRepository);
-        ChatRoom room = new ChatRoom();
+//        System.out.println(chatRepository);
+//        ChatRoom room = new ChatRoom();
+////
+//        ChatRoom saveRoom = chatRepository.createChatRoom(room);
+//        System.out.println(saveRoom.toString());
 //
-        ChatRoom saveRoom = chatRepository.createChatRoom(room);
-        System.out.println(saveRoom.toString());
-
-        ChatParticipants participants = new ChatParticipants();
-        participants.setUserId(1L);
-        participants.setRoomId(1L);
-
-        ChatParticipants saveParticipants = chatRepository.createParticipants(participants);
-
-        System.out.println(saveParticipants.toString());
+//        ChatParticipants participants = new ChatParticipants();
+//        participants.setUserId(1L);
+//        participants.setRoomId(1L);
+//
+//        ChatParticipants saveParticipants = chatRepository.createParticipants(participants);
+//
+//        System.out.println(saveParticipants.toString());
 
         ChatMessage chatMessage = new ChatMessage();
 
-        chatMessage.setUserId(1L);
+//        chatMessage.setUserId(1L);
         chatMessage.setRoomId(1L);
         chatMessage.setMessage("!@SDFAFSDFasdffas");
 
@@ -54,7 +54,10 @@ public class RepositoryTest {
 
         List<Tuple> test = chatRepository.findChatMessageById(1L, 3 ,0);
 
+        System.out.println(chatRepository.getTotalChatMessageById(1L));
+
         System.out.println(test);
+        System.out.println("AAA");
     }
 
     @Test
