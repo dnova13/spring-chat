@@ -11,9 +11,9 @@ let host = window.location.host
 
 // console.log("AAAAAAAAAAAAAAA")
 
-const url = `${host}/ws/conversation/${_pk}/`;
+const url = `${host}/ws/conversation/${_pk}`;
 // const url = `${host}/ws/conversation/${_id}/`;
-const noti_url = `${host}/ws/noti/${_id_op}/`;
+const noti_url = `${host}/ws/noti/${_id_op}`;
 
 
 
@@ -208,8 +208,6 @@ scrDiv.addEventListener('scroll', async (e) => {
             let __msgs = document.querySelectorAll('.conv-msg');
 
             if (__msgs[__msgs.length - 1].classList.contains('self-end')) return;
-
-            console.log("AAAAAAAAAAAAA")
 
             await read_msg();
             const opp_noti_url = `${window.location.host}/ws/noti/${_id_op}/`;

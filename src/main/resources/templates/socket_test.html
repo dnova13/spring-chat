@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <script type="text/javascript">
+        var socket;
+
+        // 쿼리 문자열 가져오기
+        const queryString = window.location.search;
+        // URLSearchParams 객체 생성
+        const urlParams = new URLSearchParams(queryString);
+        // 'a' 값 가져오기
+        const aValue = urlParams.get('a');
+
+        let testRoomId = aValue;
+
+
+        function connect() {
+
+            socket = new WebSocket(`ws://localhost:8080/ws/conversation/${testRoomId}`);
+
+            // 메세지 받는거
+            socket.onmessage = function(event) {
+                console.log(event.data)
+                var chatBox = document.getElementById("chatBox");
+                chatBox.value += event.data + "\n";
+            };
+        }
+
+        function sendMessage() {
+
+
+            var message = document.getElementById("message").value;
+
+            let send_data = {
+                type: 'conversation',
+                user: { id: 1, name: "test이름" },
+                pk: testRoomId,
+                msg: message,
+            };
+
+            // 메세지 보내는거
+            socket.send(JSON.stringify(send_data));
+            // socket.send(send_data);
+            // socket.send("send_data");
+            document.getElementById("message").value = '';
+        }
+    </script>
+</head>
+<body onload="connect();">
+<h1>Chat Room</h1>
+<textarea id="chatBox" rows="10" cols="50" readonly></textarea><br>
+<input type="text" id="message">
+<button onclick="sendMessage()">Send</button>
+</body>
+</html>
