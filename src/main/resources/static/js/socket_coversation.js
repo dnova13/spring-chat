@@ -4,7 +4,7 @@ const msg_input = document.querySelector('input[name=message]');
 const btn_send = document.querySelector('#send_msg');
 
 let _pk = document.querySelector('.conv').id;
-let host = window.location.host
+let host = window.location.host;
 
 // host = "127.0.0.1:8000"
 // _pk = 54
@@ -15,7 +15,7 @@ const url = `${host}/ws/conversation/${_pk}`;
 // const url = `${host}/ws/conversation/${_id}/`;
 const noti_url = `${host}/ws/noti/${_id_op}`;
 
-
+// console.log('opponet_noti_url', noti_url);
 
 const chatSocket = socket_connect(url);
 const sendNotiSocket = socket_connect(noti_url);
@@ -32,7 +32,7 @@ chatSocket.onmessage = (e) => {
     let data = JSON.parse(e.data);
     receive_data = data['message'];
 
-    // console.log(receive_data)
+    // console.log('!!!!!!! chatSocket.onmessage', receive_data);
 
     if (receive_data.type == 'conversation' && receive_data.user.id != _id) {
         bt_scrCnt = false;
@@ -46,7 +46,6 @@ chatSocket.onclose = (e) => {
 };
 
 btn_send.addEventListener('click', async (e) => {
-
     e.preventDefault();
 
     if (!msg_input.value) return;
@@ -54,17 +53,16 @@ btn_send.addEventListener('click', async (e) => {
     let _message = msg_input.value;
     let url = `/api/v1/conversations/${_pk}/send`;
     let _data = { msg: _message };
-    let _tk = document.querySelector('input[name=_csrf]').value
-    let _tk_header = document.querySelector('input[name=_csrf_header]').value
+    let _tk = document.querySelector('input[name=_csrf]').value;
+    let _tk_header = document.querySelector('input[name=_csrf_header]').value;
 
     let _h = {
-        [_tk_header] : _tk,
+        [_tk_header]: _tk,
     };
 
     // let _h = {
     //     'X-CSRFToken': _tk,
     // };
-
 
     let result = await ajaxCall(url, 'POST', _data, _h);
     result = await result.json();
@@ -104,7 +102,7 @@ function addMessage(_data, status, pend, _height) {
     let addClassName = '';
     let bgColoer = '';
     let stSpan = '';
-    let stText = "failed";
+    let stText = 'failed';
 
     const spNoMsg = document.querySelector('.no-msg');
 
@@ -134,7 +132,7 @@ function addMessage(_data, status, pend, _height) {
 
     let user_name = _data.user.name.length > 12 ? _data.user.name.slice(0, 12) + '...' : _data.user.name.slice(0, 12);
 
-    let loc = 'ko'
+    let loc = 'ko';
     // console.log("AAAAAAAAA",_data);
     // console.log("AAAAAAAAA",loc);
     // let _created = loc == 'en' ? moment(_data.created_at).format('MMM. D YYYY, h:mm a') : moment(_data.created_at).format('lll');
@@ -166,11 +164,11 @@ function addMessage(_data, status, pend, _height) {
 
 async function read_msg() {
     let url = `/api/v1/conversations/${_pk}/read`;
-    let _tk = document.querySelector('input[name=_csrf]').value
-    let _tk_header = document.querySelector('input[name=_csrf_header]').value
+    let _tk = document.querySelector('input[name=_csrf]').value;
+    let _tk_header = document.querySelector('input[name=_csrf_header]').value;
 
     let _h = {
-        [_tk_header] : _tk,
+        [_tk_header]: _tk,
     };
     //
     // let _h = {
@@ -201,7 +199,9 @@ function getCookie(name) {
 scrDiv.addEventListener('scroll', async (e) => {
     e.preventDefault();
 
-    if (Math.abs(scrDiv.scrollHeight - scrDiv.scrollTop - scrDiv.offsetHeight) <= 2) {
+    // console.log("SSSS",Math.abs(scrDiv.scrollHeight - scrDiv.scrollTop - scrDiv.offsetHeight))
+
+    if (Math.abs(scrDiv.scrollHeight - scrDiv.scrollTop - scrDiv.offsetHeight) <= 5) {
         if (!bt_scrCnt) {
             bt_scrCnt = true;
 
@@ -210,8 +210,12 @@ scrDiv.addEventListener('scroll', async (e) => {
             if (__msgs[__msgs.length - 1].classList.contains('self-end')) return;
 
             await read_msg();
-            const opp_noti_url = `${window.location.host}/ws/noti/${_id_op}/`;
+            const opp_noti_url = `${window.location.host}/ws/noti/${_id_op}`;
+
+            // console.log('read_opp_noti_url', opp_noti_url);
             const opp_notiSocket = socket_connect(opp_noti_url);
+
+            // a = { type: 'read', op_id: _id_op, conv_id: _pk, noti: true }
 
             opp_notiSocket.onopen = () => opp_notiSocket.send(JSON.stringify({ type: 'read', op_id: _id_op, conv_id: _pk, noti: true }));
         }

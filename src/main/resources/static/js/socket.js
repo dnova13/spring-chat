@@ -1,5 +1,7 @@
 function socket_connect(url) {
 
+    console.log("socket connect", url)
+
     let wsStart = `ws://`
 
     if (window.location.protocol == 'https:') {

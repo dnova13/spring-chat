@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
 
         // 알림 엔드 포인트 셋팅
-        registry.addHandler(notificationHandler, "/ws/noti").setAllowedOrigins("*");
+        registry.addHandler(notificationHandler, "/ws/noti/{userId}").setAllowedOrigins("*");
 
     }
 }
