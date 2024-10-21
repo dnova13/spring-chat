@@ -6,10 +6,10 @@ const btn_send = document.querySelector('#send_msg');
 let _pk = document.querySelector('.conv').id;
 let host = window.location.host
 
-host = "127.0.0.1:8000"
-_pk = 54
+// host = "127.0.0.1:8000"
+// _pk = 54
 
-console.log("AAAAAAAAAAAAAAA")
+// console.log("AAAAAAAAAAAAAAA")
 
 const url = `${host}/ws/conversation/${_pk}/`;
 // const url = `${host}/ws/conversation/${_id}/`;

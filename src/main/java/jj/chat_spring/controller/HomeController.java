@@ -1,9 +1,7 @@
 package jj.chat_spring.controller;
 
-import jj.chat_spring.domain.ChatRoomDto;
-import jj.chat_spring.domain.LoginForm;
-import jj.chat_spring.domain.User;
-import jj.chat_spring.domain.UserDto;
+import jj.chat_spring.domain.*;
+import jj.chat_spring.repository.ChatRepository;
 import jj.chat_spring.service.ChatService;
 import jj.chat_spring.service.UserService;
 import jj.chat_spring.web.argumentresolver.Login;
@@ -13,7 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,6 +21,8 @@ public class HomeController {
 
     private final UserService userService;
     private final ChatService chatService;
+
+    private final ChatRepository chatRepository;
 
     @RequestMapping("/")
     public String index(@Login UserDto loginUser, Model model) {
@@ -74,14 +75,45 @@ public class HomeController {
     @RequestMapping("/conversations/{roomId}")
     public String chatDetail(Model model, @Login UserDto loginUser, @PathVariable Long roomId) {
 
+        int defaultLimit = 15;
+
         Long userId = loginUser.getId();
         UserDto user = userService.getUserInfo(userId);
-        UserDto opponent = chatService.getChatOpponetInfo(roomId, userId);
 
-        System.out.println(opponent.toString());
+        List<UserSimpleDto> opponentList = chatService.getChatOpponetList(roomId);
 
+//        System.out.println(opponentList);
+//        System.out.println(opponentList.size());
+//        System.out.println(opponentList.isEmpty());
+
+        if (opponentList == null || opponentList.isEmpty()) {
+            model.addAttribute("error","401");
+            return  "redirect:/conversations/list";
+        }
+
+        List<Long> userIds = opponentList.stream()
+                .map(UserSimpleDto::getId).toList();
+
+        if (!userIds.contains(userId)) {
+            model.addAttribute("error","401");
+            return  "redirect:/conversations/list";
+        }
+
+        opponentList.removeIf(UserSimpleDto -> UserSimpleDto.getId().equals(userId));
+
+        ArrayList<ChatMessageDto> messageList = (ArrayList<ChatMessageDto>) chatService.getChatMessageListByRoomId(roomId, defaultLimit, 0);
+        Long totalMessage = chatRepository.getTotalChatMessageById(roomId);
+
+        messageList.sort((m1, m2) -> m1.getId().compareTo(m2.getId()));
+
+//        System.out.println(messageList);
+//        System.out.println(opponentList);
+
+        model.addAttribute("roomId", roomId);
         model.addAttribute("user", user);
-        model.addAttribute("opponent", opponent);
+        model.addAttribute("messageList",messageList);
+        model.addAttribute("totalMessage", totalMessage);
+        model.addAttribute("opponent", opponentList.get(0));
 
         return "conversations/conversation_detail";
     }

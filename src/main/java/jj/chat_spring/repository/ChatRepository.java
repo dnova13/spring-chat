@@ -1,10 +1,7 @@
 package jj.chat_spring.repository;
 
 import jakarta.persistence.Tuple;
-import jj.chat_spring.domain.ChatMessage;
-import jj.chat_spring.domain.ChatParticipants;
-import jj.chat_spring.domain.ChatRoom;
-import jj.chat_spring.domain.ChatRoomDto;
+import jj.chat_spring.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,8 @@ public interface ChatRepository {
     List<ChatRoomDto> findChatRoomsByUserId(Long userId);
 
     Tuple findChatOpponetInfo(Long chatRoomId, Long userId);
+
+    List<UserSimpleDto> findChatOpponetList(Long chatRoomId);
 
     List<Tuple> findChatMessageById(Long chatRoomId, int limit, int offset);
 

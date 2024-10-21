@@ -4,10 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
-import jj.chat_spring.domain.ChatMessage;
-import jj.chat_spring.domain.ChatParticipants;
-import jj.chat_spring.domain.ChatRoom;
-import jj.chat_spring.domain.ChatRoomDto;
+import jj.chat_spring.domain.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -83,8 +80,24 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public Tuple findChatOpponetInfo(Long chatRoomId, Long userId) {
+    public List<UserSimpleDto> findChatOpponetList(Long chatRoomId) {
 
+        String jpql =
+                "select u.id, u.username,u.avatar, u.firstName , u.lastName, u.email \n" +
+                        "from ChatParticipants cp \n" +
+                        "inner join User u \n" +
+                        "on u.id = cp.userId  \n" +
+                        "where cp.roomId = :roomId \n";
+//                        "and u.id != :userId \n";
+
+        return em.createQuery(jpql, UserSimpleDto.class)
+//                .setParameter("userId", userId)
+                .setParameter("roomId", chatRoomId)
+                .getResultList();
+    }
+
+    @Override
+    public Tuple findChatOpponetInfo(Long chatRoomId, Long userId) {
         String jpql =
                 "select u.id, u.email,u.avatar, u.firstName , u.lastName, u.username \n" +
                         "from ChatParticipants cp \n" +
@@ -92,7 +105,6 @@ public class ChatRepositoryImpl implements ChatRepository {
                         "on u.id = cp.userId  \n" +
                         "where cp.roomId = :roomId \n" +
                         "and u.id != :userId \n";
-
         return em.createQuery(jpql, Tuple.class)
                 .setParameter("userId", userId)
                 .setParameter("roomId", chatRoomId)

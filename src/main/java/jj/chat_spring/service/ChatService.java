@@ -44,18 +44,21 @@ public class ChatService {
 
     public UserDto getChatOpponetInfo(Long roomId, Long userId) {
         Tuple result = chatRepository.findChatOpponetInfo(roomId, userId);
-
         UserDto user = new UserDto();
-
         user.setId(result.get(0, Long.class));
         user.setEmail(result.get(1, String.class));
         user.setAvatar(result.get(2, String.class));
         user.setFirstName(result.get(3, String.class));
         user.setLastName(result.get(4, String.class));
         user.setUsername(result.get(5, String.class));
-
-       return  user;
+        return  user;
     }
+
+    public List<UserSimpleDto> getChatOpponetList(Long roomId) {
+        return chatRepository.findChatOpponetList(roomId);
+
+    }
+
 
     public ChatMessage writeChatMessage(ChatMessage chatMessage) {
         return chatRepository.createChatMessage(chatMessage);
