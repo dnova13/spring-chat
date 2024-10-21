@@ -131,7 +131,12 @@
                         </p>
                         <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
                     </div>
-                    <span th:if="${room.isRead == false}" class="flex text-right text-sm text-red-500">●</span>
+                    <th:block th:if="${room.userId != room.recentUserId}">
+                        <span th:if="${!room.isRead}" class="flex text-right text-sm text-red-500">●</span>
+                    </th:block>
+<!--                    {% if last_msg_oppenent.is_read == False %}-->
+<!--                    <span class="flex text-right text-sm text-red-500">●</span>-->
+<!--                    {% endif %}-->
                 </a>
             </div>
         </div>

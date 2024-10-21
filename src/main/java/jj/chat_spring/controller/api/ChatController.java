@@ -53,19 +53,19 @@ public class ChatController {
     @GetMapping(value = "/{roomId}/list")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getChatMessageInRoom(@PathVariable Long roomId,
-                                                                       @RequestParam(defaultValue = "15") int limit,
-                                                                       @RequestParam(defaultValue = "0") int start) {
-
-        System.out.println("AAAAAAAA");
+                                                                    @RequestParam(defaultValue = "15") int limit,
+                                                                    @RequestParam(defaultValue = "0") int start) {
 
         int offset = (start > 0) ? (start - 1) : 0;
-        ArrayList<ChatMessageDto> ChatMessageDto = (ArrayList<ChatMessageDto>) chatService.getChatMessageListByRoomId(roomId, limit, offset);
+        ArrayList<ChatMessageDto> ChatMessageList = (ArrayList<ChatMessageDto>) chatService.getChatMessageListByRoomId(roomId, limit, offset);
         Long totalMessage = chatRepository.getTotalChatMessageById(roomId);
 
         Map<String, Object> result = new HashMap<>();
 
+        System.out.println(ChatMessageList);
+
         result.put("total", totalMessage);
-        result.put("data", ChatMessageDto);
+        result.put("data", ChatMessageList);
         result.put("success", true);
 
         return ResponseEntity.ok(result);
@@ -74,12 +74,21 @@ public class ChatController {
     // 메시지 쓰기
     @PostMapping(value = "/{roomId}/send", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> writeChatMessage(@PathVariable Long roomId, @Login UserDto loginUser, @RequestParam String msg) {
+    public ResponseEntity<Map<String, Object>> writeChatMessage(@PathVariable Long roomId
+            , @Login UserDto loginUser
+            , @RequestBody Map<String, String> requestBody) {
+
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//        System.out.println(requestBody);
+        String message = requestBody.get("msg");
+
+//        UserDto loginUser = new UserDto();
+//        loginUser.setId(1L);
 
         Long userId = loginUser.getId();
 
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setMessage(msg);
+        chatMessage.setMessage(message);
         chatMessage.setUserId(userId);
         chatMessage.setRoomId(roomId);
 
@@ -109,9 +118,9 @@ public class ChatController {
     // 메시지 읽음 처리
     @PostMapping(value = "/{roomId}/read", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> readChatMessage(@PathVariable Long roomId,  @Login UserDto loginUser) {
-
-//        @RequestParam Long userId,
+    public ResponseEntity<Map<String, Object>> readChatMessage(@PathVariable Long roomId
+            , @Login UserDto loginUser
+    ) {
 
         Long userId = loginUser.getId();
 

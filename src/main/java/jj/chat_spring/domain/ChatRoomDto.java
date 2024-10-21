@@ -13,6 +13,8 @@ public class ChatRoomDto {
 
     private Long userId;
 
+    private Long recentUserId;
+
     private String message;
 
     private LocalDateTime createdAt;
@@ -33,4 +35,12 @@ public class ChatRoomDto {
         this.isRead = isRead;
     }
 
+    public ChatRoomDto(Long id, Long userId, Long recentUserId, String message, LocalDateTime createdAt, boolean isRead) {
+        this.id = id;
+        this.userId = userId;
+        this.recentUserId = recentUserId;
+        this.message = message;
+        this.createdAt = createdAt;
+        this.isRead = isRead;
+    }
 }

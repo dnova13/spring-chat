@@ -132,9 +132,8 @@
                              th:text="${item.message}"
                         ></div>
 <!--                        <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>-->
-                        <p class="text-xs" th:text="${#temporals.format(item.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}">
-
-                        </p>
+                        <p class="text-xs" th:text="${#temporals.format(item.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
+                        <p th:if="${item.user.id == user.id} and ${item.isRead == false}" class="is-read text-xs">1</p>
                     </div>
                 </th:block>
             </th:block>

@@ -12,6 +12,7 @@ async function ajaxCall(url, method, data, _hearders) {
             "Content-Type": "application/json",
             ..._hearders
         },
+        credentials: 'include',
         body: method == "POST" ? JSON.stringify(data) : null
     });
 

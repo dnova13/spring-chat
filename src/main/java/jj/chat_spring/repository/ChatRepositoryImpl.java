@@ -64,7 +64,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     public List<ChatRoomDto> findChatRoomsByUserId(Long userId) {
         String jpql =
 //                "select  cr.id, cp.userId , cm.message , cm.createdAt, cm.isRead \n" +
-                "select new jj.chat_spring.domain.ChatRoomDto(cr.id, cp.userId, cm.message, cm.createdAt, cm.isRead) " +
+                "select new jj.chat_spring.domain.ChatRoomDto(cr.id, cp.userId, cm.userId, cm.message, cm.createdAt, cm.isRead) " +
                 "from ChatRoom cr \n" +
                 "inner join ChatMessage cm \n" +
                 "on cr.id = cm.roomId \n" +

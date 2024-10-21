@@ -42,7 +42,7 @@ chatSocket.onmessage = (e) => {
 
 chatSocket.onclose = (e) => {
     // alert(gettext("Failed to send"))
-    console.log(gettext('Failed to send'));
+    console.log('Failed to send');
 };
 
 btn_send.addEventListener('click', async (e) => {
@@ -52,13 +52,18 @@ btn_send.addEventListener('click', async (e) => {
     if (!msg_input.value) return;
 
     let _message = msg_input.value;
-    let url = `/api/v1/conversations/${_pk}/send/`;
+    let url = `/api/v1/conversations/${_pk}/send`;
     let _data = { msg: _message };
-    let _tk = document.querySelector('input[name=csrfmiddlewaretoken]').value;
+    let _tk = document.querySelector('input[name=_csrf]').value
+    let _tk_header = document.querySelector('input[name=_csrf_header]').value
 
     let _h = {
-        'X-CSRFToken': _tk,
+        [_tk_header] : _tk,
     };
+
+    // let _h = {
+    //     'X-CSRFToken': _tk,
+    // };
 
 
     let result = await ajaxCall(url, 'POST', _data, _h);
@@ -129,7 +134,12 @@ function addMessage(_data, status, pend, _height) {
 
     let user_name = _data.user.name.length > 12 ? _data.user.name.slice(0, 12) + '...' : _data.user.name.slice(0, 12);
 
-    let _created = loc == 'en' ? moment(_data.created).format('MMM. D YYYY, h:mm a') : moment(_data.created).format('lll');
+    let loc = 'ko'
+    // console.log("AAAAAAAAA",_data);
+    // console.log("AAAAAAAAA",loc);
+    // let _created = loc == 'en' ? moment(_data.created_at).format('MMM. D YYYY, h:mm a') : moment(_data.created_at).format('lll');
+    // let _created = moment(_data.created_at).format('lll');
+    let _created = moment(_data.created_at).format('YYYY년 MM월 DD일 hh:mm A').replace('PM', '오후').replace('AM', '오전');
     _created = _created.replace('am', 'a.m.').replace('pm', 'p.m.');
 
     tags = `<span class="text-sm font-medium w-56 text-gray-600 truncate">
@@ -155,12 +165,17 @@ function addMessage(_data, status, pend, _height) {
 }
 
 async function read_msg() {
-    let url = `/api/v1/conversations/${_pk}/read/`;
-    let _tk = document.querySelector('input[name=csrfmiddlewaretoken]').value;
+    let url = `/api/v1/conversations/${_pk}/read`;
+    let _tk = document.querySelector('input[name=_csrf]').value
+    let _tk_header = document.querySelector('input[name=_csrf_header]').value
 
     let _h = {
-        'X-CSRFToken': _tk,
+        [_tk_header] : _tk,
     };
+    //
+    // let _h = {
+    //     'X-CSRFToken': _tk,
+    // };
 
     let result = await ajaxCall(url, 'POST', null, _h);
     return result;
@@ -194,6 +209,8 @@ scrDiv.addEventListener('scroll', async (e) => {
 
             if (__msgs[__msgs.length - 1].classList.contains('self-end')) return;
 
+            console.log("AAAAAAAAAAAAA")
+
             await read_msg();
             const opp_noti_url = `${window.location.host}/ws/noti/${_id_op}/`;
             const opp_notiSocket = socket_connect(opp_noti_url);
@@ -205,7 +222,7 @@ scrDiv.addEventListener('scroll', async (e) => {
             tp_scrCnt = true;
 
             chatCnt = document.querySelectorAll('.conv-msg').length;
-            let url = `/api/v1/conversations/${_pk}/list/?start=${chatCnt + 1}`;
+            let url = `/api/v1/conversations/${_pk}/list?start=${chatCnt + 1}`;
             // let s_url = `https://airbnb-clone-dnova12222.s3.amazonaws.com`
             // let s_url = `http://localhost`;
             let s_url = `${window.location.protocol}//${window.location.host}`;
@@ -213,7 +230,8 @@ scrDiv.addEventListener('scroll', async (e) => {
             let img = document.createElement('img');
 
             img.setAttribute('class', 'mx-auto mt-3');
-            img.setAttribute('src', s_url + '/static/img/loading.gif');
+            img.setAttribute('src', s_url + '/img/loading.gif');
+            // img.setAttribute('src', s_url + '/static/img/loading.gif');
 
             scrDiv.prepend(img);
 

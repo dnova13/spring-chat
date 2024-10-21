@@ -10,6 +10,8 @@ public class ChatMessageDto {
     private Long id;
     private String message;
     private Long roomId;
+
+    @JsonProperty("is_read")
     private boolean isRead;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
