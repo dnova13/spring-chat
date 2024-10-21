@@ -37,6 +37,10 @@ out/
 .vscode/
 
 node_modules/
+/mariadb/maria_data/
+/redis/redis_data/
+
+.env
 
 application-loc.properties
 application-prod.properties

@@ -83,7 +83,19 @@
 </head>
 <body class="text-gray-800 mt-10 font-light" inmaintabuse="1" cz-shortcut-listen="true">
 
-<div th:include="/partials/header"></div>
+<div th:replace="~{partials/header :: header}"></div>
+
+<!--<th:block th:replace="~{/partials/header}"></th:block>-->
+
+<!--<div th:include="{/partials/header}"></div>-->
+<!--<div th:insert="~{/partials/header}"></div>-->
+
+<!--@{/css/styles.css}-->
+
+<!---->
+<!---->
+
+
 
 <div class="container mx-auto my-10 mt-20 flex justify-between min-h-50vh">
     <div class="border w-1/4 p-10 ">
