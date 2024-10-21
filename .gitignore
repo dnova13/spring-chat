@@ -38,5 +38,5 @@ out/
 
 node_modules/
 
-
-application.properties
+application-loc.properties
+application-prod.properties
