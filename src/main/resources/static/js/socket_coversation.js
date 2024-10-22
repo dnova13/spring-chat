@@ -31,7 +31,6 @@ scrDiv.scrollTop = scrDiv.scrollHeight;
 chatSocket.onmessage = (e) => {
     let data = JSON.parse(e.data);
     receive_data = data['message'];
-
     // console.log('!!!!!!! chatSocket.onmessage', receive_data);
 
     if (receive_data.type == 'conversation' && receive_data.user.id != _id) {

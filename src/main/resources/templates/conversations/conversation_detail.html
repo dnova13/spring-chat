@@ -115,7 +115,8 @@
                      class="w-8vw h-8vw rounded-full bg-cover"
                      th:style="'background-image: url(' + ${opponent.avatar} + ');'">
                 </div>
-                <span class="mt-2 text-gray-500 ml truncate" style="max-width:5rem" th:text="${opponent.username}"></span>
+                <span class="mt-2 text-gray-500 ml truncate" style="max-width:5rem"
+                      th:text="${opponent.username}"></span>
             </div>
         </div>
     </div>
@@ -128,13 +129,17 @@
             <th:block th:if="${totalMessage >0 }">
                 <th:block th:each="item : ${messageList}">
                     <div class="conv-msg mb-10" th:classappend="${item.user.id == user.id} ? 'self-end : text-right'">
-                        <span class="text-sm font-medium  w-56 text-gray-600 truncate" th:if="${item.user.firstName.length() <= 12}" th:text="${item.user.firstName}"></span>
-                        <span class="text-sm font-medium  w-56 text-gray-600 truncate" th:if="${item.user.firstName.length() > 12}" th:text="${#strings.substring(item.user.firstName, 0, 12)} + '...'"></span>
+                        <span class="text-sm font-medium  w-56 text-gray-600 truncate"
+                              th:if="${item.user.firstName.length() <= 12}" th:text="${item.user.firstName}"></span>
+                        <span class="text-sm font-medium  w-56 text-gray-600 truncate"
+                              th:if="${item.user.firstName.length() > 12}"
+                              th:text="${#strings.substring(item.user.firstName, 0, 12)} + '...'"></span>
 
-                        <div class="mt-px p-5 w-56 rounded break-words text-left" th:classappend="${item.user.id == user.id} ? 'bg-teal-500 text-white' : 'bg-gray-300'"
+                        <div class="mt-px p-5 w-56 rounded break-words text-left"
+                             th:classappend="${item.user.id == user.id} ? 'bg-teal-500 text-white' : 'bg-gray-300'"
                              th:text="${item.message}"
                         ></div>
-<!--                        <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>-->
+                        <!--                        <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>-->
                         <p class="text-xs" th:text="${#temporals.format(item.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
                         <p th:if="${item.user.id == user.id} and ${item.isRead == false}" class="is-read text-xs">1</p>
                     </div>
@@ -149,11 +154,10 @@
     </div>
 
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.0/moment-with-locales.min.js"></script>
 <script>
 
-</script>
-<script>
+
     let loc = "ko"
 
     // user.pk
@@ -162,18 +166,11 @@
     const _id_op = [[${opponent.id}]]
     const _name = "[[${user.firstName}]]"
 
-    moment.locale(loc)
+    moment.locale(loc);
+
 </script>
 <script th:src="@{/js/socket_coversation.js}" defer></script>
 <script th:src="@{/js/ajax_call.js}" defer></script>
 <script th:src="@{/js/socket.js}" defer></script>
-<!--    <script src="{% url 'javascript-catalog' %}"></script>-->
-
-
-<!--    <script src="{% static 'js/socket_coversation.js' %}"></script>-->
-<!--    <script src="{% static 'js/ajax_call.js' %}"></script>-->
-<!--    <script src="{% static 'js/socket.js' %}"></script>-->
-<!--    <script src="{% url 'javascript-catalog' %}"></script>-->
-
 </body>
 </html>

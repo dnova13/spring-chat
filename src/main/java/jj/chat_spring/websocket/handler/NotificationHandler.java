@@ -71,7 +71,7 @@ public class NotificationHandler extends TextWebSocketHandler {
         System.out.println("handleTextMessage");
         System.out.println("userId: "+userId);
         String groupName = "noti_" + userId;
-        System.out.println("groupName: "+"groupName");
+        System.out.println("groupName: "+ groupName);
         System.out.println(groupName);
 
         // 그룹 이름을 추출 (pk를 이용해 그룹을 찾음)

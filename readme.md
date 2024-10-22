@@ -5,6 +5,23 @@
 - java version 17
 - spring boot version 3.4.x
 
+### application-prod.properties setting
+```
+# maria db setting
+spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
+spring.datasource.url=jdbc:mariadb://{host}:{port}/{dbname}
+spring.datasource.username={username}
+spring.datasource.password={password}
+
+# redis setting
+spring.data.redis.host={host}
+spring.data.redis.port={port}
+
+# spring security setting
+spring.security.user.name={username}
+spring.security.user.password={password}
+
+```
 
 ### gradle spring boot 실행
 ```
@@ -43,5 +60,7 @@ docker compose up -d
 docker-compose up  -d --build
 
 docker-compose build --no-cache
+
+docker run -d -p 6379:6379 redis
 
 ```

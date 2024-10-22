@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: spring_chat
+    restart: unless-stopped
     mem_limit: 256m
     ports:
          - '8080:8080'
@@ -20,10 +21,10 @@ services:
     container_name: mariadb
     # 최대 메모리양 설정 : 128m : 적은양 간단한 작업식 적절
     mem_limit: 128m
-#    expose:
-#      - 3306
-    ports:
-      - '3307:3306'
+    expose:
+      - 3306
+#    ports:
+#      - '3307:3306'
     volumes:
       - ./mariadb/maria_data:/var/lib/mysql
       - ./mariadb/sqls/:/docker-entrypoint-initdb.d/
