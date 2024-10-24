@@ -6,6 +6,7 @@ import jj.chat_spring.domain.ChatRoomDto;
 import jj.chat_spring.domain.UserDto;
 import jj.chat_spring.repository.ChatRepository;
 import jj.chat_spring.service.ChatService;
+import jj.chat_spring.utils.JsonResponse;
 import jj.chat_spring.web.argumentresolver.Login;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,17 +59,18 @@ public class ChatController {
 
         int offset = (start > 0) ? (start - 1) : 0;
         ArrayList<ChatMessageDto> ChatMessageList = (ArrayList<ChatMessageDto>) chatService.getChatMessageListByRoomId(roomId, limit, offset);
-        Long totalMessage = chatRepository.getTotalChatMessageById(roomId);
+        int totalMessage = Math.toIntExact(chatRepository.getTotalChatMessageById(roomId));
 
         Map<String, Object> result = new HashMap<>();
 
         System.out.println(ChatMessageList);
 
-        result.put("total", totalMessage);
-        result.put("data", ChatMessageList);
-        result.put("success", true);
-
-        return ResponseEntity.ok(result);
+//        result.put("total", totalMessage);
+//        result.put("data", ChatMessageList);
+//        result.put("success", true);
+//
+//        return ResponseEntity.ok(result);
+        return JsonResponse.success(ChatMessageList, totalMessage);
     }
 
     // 메시지 쓰기
@@ -78,7 +80,7 @@ public class ChatController {
             , @Login UserDto loginUser
             , @RequestBody Map<String, String> requestBody) {
 
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 //        System.out.println(requestBody);
         String message = requestBody.get("msg");
 
@@ -104,15 +106,15 @@ public class ChatController {
         Map<String, Object> result = new HashMap<>();
 
         if (savedChatMessage == null) {
-            result.put("success", false);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
+            return JsonResponse.fail("invalid value", HttpStatus.BAD_REQUEST);
+//            result.put("success", false);
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
         }
 
 
-        result.put("success", true);
-        result.put("data", savedChatMessage);
-
-        return ResponseEntity.ok(result);
+//        result.put("success", true);
+//        result.put("data", savedChatMessage);
+        return JsonResponse.success(savedChatMessage);
     }
 
     // 메시지 읽음 처리
@@ -129,6 +131,7 @@ public class ChatController {
         Map<String, Object> result = new HashMap<>();
         result.put("success", isRead);
 
+//        return JsonResponse.success()
         return ResponseEntity.ok(result);
     }
 
