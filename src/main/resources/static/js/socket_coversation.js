@@ -1,6 +1,7 @@
 let receive_data;
 
 const msg_input = document.querySelector('input[name=message]');
+// const msg_input = document.querySelector('textarea[name=message]');
 const btn_send = document.querySelector('#send_msg');
 
 let _pk = document.querySelector('.conv').id;
@@ -51,7 +52,7 @@ btn_send.addEventListener('click', async (e) => {
 
     let _message = msg_input.value;
     let url = `/api/v1/conversations/${_pk}/send`;
-    let _data = { msg: _message };
+    let _data = {msg: _message};
     let _tk = document.querySelector('input[name=_csrf]').value;
     let _tk_header = document.querySelector('input[name=_csrf_header]').value;
 
@@ -83,12 +84,12 @@ btn_send.addEventListener('click', async (e) => {
 
         let send_data = {
             type: 'conversation',
-            user: { id: _id, name: _name },
+            user: {id: _id, name: _name},
             pk: _pk,
             msg: _message,
         };
 
-        sendNotiSocket.send(JSON.stringify({ type: 'conversation', conv_id: _pk, noti: true }));
+        sendNotiSocket.send(JSON.stringify({type: 'conversation', conv_id: _pk, msg: _message, noti: true}));
         chatSocket.send(JSON.stringify(send_data));
 
         return;
@@ -216,7 +217,12 @@ scrDiv.addEventListener('scroll', async (e) => {
 
             // a = { type: 'read', op_id: _id_op, conv_id: _pk, noti: true }
 
-            opp_notiSocket.onopen = () => opp_notiSocket.send(JSON.stringify({ type: 'read', op_id: _id_op, conv_id: _pk, noti: true }));
+            opp_notiSocket.onopen = () => opp_notiSocket.send(JSON.stringify({
+                type: 'read',
+                op_id: _id_op,
+                conv_id: _pk,
+                noti: true
+            }));
         }
     } else if (scrDiv.scrollTop <= 0) {
         if (!tp_scrCnt && (!chatTotal || chatTotal > chatCnt)) {

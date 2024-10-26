@@ -79,7 +79,50 @@
 
     .enable_copy_btns_btn:active {
         opacity: 1
-    }</style>
+    }
+
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+            padding: 0 16px;
+        }
+
+        .border {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+        .avatar {
+            margin-top: 12px;
+        }
+
+        .chat-list {
+            width: 100%;
+        }
+
+        #reserv-section {
+            margin-left: 0;
+            padding: 10px;
+        }
+
+        .text-lg {
+            font-size: 16px;
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        @media (pointer: coarse) {
+            .container {
+                margin-top: 15px;
+            }
+        }
+    }
+
+    </style>
 </head>
 <body class="text-gray-800 mt-10 font-light" inmaintabuse="1" cz-shortcut-listen="true">
 
@@ -100,7 +143,7 @@
 <div class="container mx-auto my-10 mt-20 flex justify-between min-h-50vh">
     <div class="border w-1/4 p-10 ">
         <span class="text-center w-full block text-lg font-medium">대화</span>
-        <div class="justify-between mx-auto mt-10 items-center">
+        <div class="justify-between mx-auto mt-10 items-center avatar">
             <div class="flex flex-col items-center">
 
                 <div th:if="${user.avatar == null or user.avatar.trim().length() < 1}" class="h-20 w-20 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
@@ -117,7 +160,7 @@
     </div>
 
     <!-- chat message -->
-    <div class="flex-grow">
+    <div class="chat-list flex-grow">
         <div id="reserv-section" class="conv-scroll border ml-10 p-10 flex flex-col">
             <div th:each="room : ${room_list}" class="flax items-center mb-2 p-4 rounded-lg font-light text-lg w-full text-black bg-yellow-200 hover:bg-yellow-100">
                 <a th:id="${room.id}" class="convs flex items-center" th:href="@{/conversations/{id}(id=${room.id})}">

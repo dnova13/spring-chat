@@ -1,12 +1,62 @@
 <th:block th:fragment="header">
-    <div class="container mx-auto rounded-lg" style="
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;"
-    >
-        <button id="home" class="btn bg-black w-24 rounded-lg text-white font-bold" onclick="location.href='/'">Home
+    <style type="text/css">
+        .tap-container {
+            /*display: flex;*/
+            /*flex-wrap: nowrap;*/
+            /*justify-content: space-between;*/
+            /* !* 패딩 추가 *!*/
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+        .tap-btn {
+            border-radius: 0.5rem; /* 테두리 둥글기 설정 */
+            /*padding: 10px; !* 버튼 패딩 *!*/
+            font-weight: bold; /* 폰트 두껍게 */
+            width: 120px;
+            padding: 12px 16px;
+        }
+
+        #home {
+            background-color: black; /* 홈 버튼 배경색 */
+            color: white; /* 텍스트 색상 */
+            /*width: 120px; !* 너비 조정 *!*/
+        }
+
+        #logout {
+            background-color: #f56565; /* 로그아웃 버튼 배경색 */
+            color: white; /* 텍스트 색상 */
+            /*width: 120px; !* 너비 조정 *!*/
+        }
+
+        /* 모바일 반응형 스타일 */
+        @media (max-width: 768px) {
+            .tap-container {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                padding: 16px;
+            }
+
+            .tap-btn {
+                width: auto;
+            }
+
+            .btn {
+                margin-bottom: 10px;
+            }
+
+            #logout {
+                width: auto;
+            }
+        }
+    </style>
+    <div class="tap-container container mx-auto rounded-lg" style="">
+        <button id="home" class="btn tap-btn bg-black w-24 rounded-lg text-white font-bold" onclick="location.href='/'">Home
         </button>
-        <button id="logout" class="btn bg-red-500 rounded-lg w-1/6 text-white font-bold" style="width: 120px;">Logout
+        <button id="logout" class="btn tap-btn bg-red-500 rounded-lg w-1/6 text-white font-bold" >Logout
         </button>
         <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
         <input type="hidden" name="_csrf_header" th:value="${_csrf.headerName}"/>
@@ -66,6 +116,12 @@
                     if (pathname.includes("conversations/list")) {
                         document.querySelectorAll(".convs").forEach(item => {
                             if (item.id === _noti_data.message.conv_id) {
+
+                                // console.log("_noti_data",_noti_data);
+                                try {
+                                    item.children[1].children[1].children[0].innerText = _noti_data.message.msg
+                                } catch (e) {
+                                }
 
                                 if (item.children[2]) return
 

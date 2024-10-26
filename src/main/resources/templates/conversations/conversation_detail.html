@@ -79,7 +79,63 @@
 
     .enable_copy_btns_btn:active {
         opacity: 1
-    }</style>
+    }
+
+    .write-textarea {
+        height: auto; /* 자동 높이 */
+        overflow: hidden; /* 스크롤바 숨기기 */
+        resize: none; /* 사용자가 크기 조절 불가 */
+        line-height: 1.5; /* 줄 간격 설정 */
+        padding: 8px; /* 패딩 추가 */
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            flex-direction: column;
+            padding: 0 16px;
+        }
+
+        .border {
+            width: 100%;
+            margin-bottom: 20px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            margin-left: 0px;
+        }
+
+        .avatar {
+            margin-top: 12px;
+        }
+
+        .text-lg {
+            font-size: 16px;
+        }
+
+        .text-sm {
+            font-size: 13px;
+        }
+
+        .write-form {
+            width: 100%;
+        }
+
+        @media (pointer: coarse) {
+            .container {
+                margin-top: 15px;
+            }
+
+            .conv-content {
+                width: 50vw;
+            }
+
+            .text-xs {
+                font-size: 11px;
+            }
+
+        }
+    }
+
+    </style>
 </head>
 <body class="text-gray-800 mt-10 font-light" inmaintabuse="1" cz-shortcut-listen="true">
 
@@ -91,7 +147,7 @@
 <div th:id="${roomId}" class="conv container mx-auto my-10 mt-20 flex justify-between min-h-50vh">
     <div class="border w-1/4 p-10 ">
         <span class="text-center w-full block text-lg font-medium break-words">대화</span>
-        <div class="flex justify-center mt-10 items-center">
+        <div class="flex justify-center mt-10 items-center avatar">
             <div class="flex flex-col items-center">
                 <div th:if="${user.avatar == null or user.avatar.trim().length() < 1}"
                      class="w-8vw h-8vw bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
@@ -129,26 +185,28 @@
             <th:block th:if="${totalMessage >0 }">
                 <th:block th:each="item : ${messageList}">
                     <div class="conv-msg mb-10" th:classappend="${item.user.id == user.id} ? 'self-end : text-right'">
-                        <span class="text-sm font-medium  w-56 text-gray-600 truncate"
+                        <span class="conv-firstname text-sm font-medium  w-56 text-gray-600 truncate"
                               th:if="${item.user.firstName.length() <= 12}" th:text="${item.user.firstName}"></span>
-                        <span class="text-sm font-medium  w-56 text-gray-600 truncate"
+                        <span class="conv-firstname text-sm font-medium  w-56 text-gray-600 truncate"
                               th:if="${item.user.firstName.length() > 12}"
                               th:text="${#strings.substring(item.user.firstName, 0, 12)} + '...'"></span>
 
-                        <div class="mt-px p-5 w-56 rounded break-words text-left"
+                        <div class="conv-content mt-px p-5 w-56 rounded break-words text-left"
                              th:classappend="${item.user.id == user.id} ? 'bg-teal-500 text-white' : 'bg-gray-300'"
                              th:text="${item.message}"
                         ></div>
                         <!--                        <p class="text-xs mt-3 text-gray-600 truncate" th:text="${#temporals.format(room.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>-->
-                        <p class="text-xs" th:text="${#temporals.format(item.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
+                        <p class="conv-date text-xs"
+                           th:text="${#temporals.format(item.createdAt, 'yyyy년 MM월 dd일 hh:mm a')}"></p>
                         <p th:if="${item.user.id == user.id} and ${item.isRead == false}" class="is-read text-xs">1</p>
                     </div>
                 </th:block>
             </th:block>
         </div>
-        <form class="mt-10 w-1/2 mx-auto" method="POST">
+        <form class="write-form mt-10 w-1/2 mx-auto" method="POST">
             <!--            <input type="hidden" th:name = "csrfmiddlewaretoken" th:value="${_csrf.token}" />-->
-            <input class="border-box mb-5" name="message" placeholder="Write a Message" required/>
+                        <input class="border-box mb-5" name="message" placeholder="Write a Message" required/>
+<!--            <textarea class="write-textarea border-box mb-5" name="message" placeholder="Write a Message" required></textarea>-->
             <button id="send_msg" class="btn-link">Send Comment</button>
         </form>
     </div>
