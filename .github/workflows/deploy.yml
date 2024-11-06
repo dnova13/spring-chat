@@ -1,0 +1,142 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test-deploy:
+    runs-on: ubuntu-latest # 테스트할 리눅스
+    timeout-minutes: 40 # 타임 아웃 시간 셋팅(분)
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+
+          - name: generate .env file
+            continue-on-error: true
+            run: |
+              # env 파일 생성
+              echo "DB_HOST=mariadb" >> .env
+              echo "DB_PW=${{secrets.DB_PW}}" >> .env
+              echo "DB_NAME=${{secrets.DB_NAME}}" >> .env
+              echo "DB_USER=${{secrets.DB_USER}}" >> .env
+              echo "TIME_ZONE=${{vars.TIME_ZONE}}" >> .env
+              
+          - name: docker build
+            run: |
+              docker compose up -d redis mariadb
+
+          - name: generate application-prod.properties
+            run: |
+              echo "spring.application.name=chat-spring" >> src/main/resources/application-prod.properties
+              
+              # maria db 설정
+              echo "spring.datasource.url=jdbc:mariadb://mariadb:3306/chat" >> src/main/resources/application-prod.properties
+              echo "spring.datasource.username=${{ secrets.DB_USERNAME }}" >> src/main/resources/application-prod.properties
+              echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> src/main/resources/application-prod.properties
+              echo "spring.datasource.driver-class-name=org.mariadb.jdbc.Driver" >> src/main/resources/application-prod.properties
+              
+              # redis 설정
+              echo "spring.data.redis.host=redis" >> src/main/resources/application-prod.properties
+              echo "spring.data.redis.port=6379" >> src/main/resources/application-prod.properties
+              
+              # spring security 설정
+              echo "spring.security.user.name=${{ secrets.SECURITY_USERNAME }}" >> src/main/resources/application-prod.properties
+              echo "spring.security.user.password=${{ secrets.SECURITY_PASSWORD }}" >> src/main/resources/application-prod.properties
+
+          - name: spring server test and build
+            run: |
+              ./gradlew build
+
+          - name: docker push
+            run: |
+              # 여기서는 도커 허브 레지스트리가 안되므로 registry-1.docker.io 그냥 생략해서 쓰면 도커허브로 연결됨.
+              docker login -u ${{ vars.DOCKER_ID }} -p ${{ vars.DOCKER_ACCESS_TOKEN }}
+    
+              # 해당 레포지토리에서 project 이름 추출
+              REPO_NAME=${{ github.repository }}
+              PROJECT_NAME=${REPO_NAME##*/}
+              echo "The project name is $PROJECT_NAME"
+              
+              docker-compose build spring-chat
+                
+              # docker tag
+              docker tag $PROJECT_NAME-spring-chat ${{ vars.DOCKER_ID }}/$PROJECT_NAME-spring-chat:latest
+              docker tag $PROJECT_NAME-mariadb ${{ vars.DOCKER_ID }}/$PROJECT_NAME-mariadb:latest
+              docker tag $PROJECT_NAME-redis ${{ vars.DOCKER_ID }}/$PROJECT_NAME-redis:latest
+    
+              # docker push
+              docker push ${{ vars.DOCKER_ID }}/$PROJECT_NAME-spring-chat
+              docker push ${{ vars.DOCKER_ID }}/$PROJECT_NAME-mariadb
+              docker push ${{ vars.DOCKER_ID }}/$PROJECT_NAME-redis
+
+          - name: SSH and deploy
+            uses: appleboy/ssh-action@master
+            with:
+              host: ${{ secrets.SERVER_IP }}
+              username: ${{ secrets.SERVER_USERNAME }}
+              key: ${{ secrets.SSH_PRIVATE_KEY }}
+              port: 22
+              command_timeout: 20m
+              script: |
+    
+                # 도커 허브 로그인
+                docker login registry-1.docker.io -u ${{ vars.DOCKER_ID }} -p ${{ vars.DOCKER_ACCESS_TOKEN }}
+    
+                mkdir ~/project/${{ vars.PROJECT_NAME }}
+    
+                # Docker Compose로 애플리케이션 빌드 및 실행
+                cd ~/project/${{ vars.PROJECT_NAME }}
+                
+                sudo docker pull ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-spring-chat:latest
+                sudo docker pull ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-mariadb:latest
+                sudo docker pull ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-redis:latest
+    
+                sudo docker network create chat-network
+                
+                 # mariadb 실행
+                  sudo docker run -d \
+                  --name mariadb \
+                  --memory=128m \
+                  --restart=unless-stopped \
+                  -v $(pwd)/mariadb/maria_data:/var/lib/mysql \
+                  -v $(pwd)/mariadb/sqls/:/docker-entrypoint-initdb.d/ \
+                  -e MARIADB_DATABASE=${{ vars.DB_NAME }} \
+                  -e MARIADB_USER=${{ vars.DB_USER}} \
+                  -e MARIADB_ROOT_PASSWORD=${{ vars.DB_PASS}} \
+                  -e TZ=${{ vars.TIME_ZONE }} \
+                  --expose=3306 \
+                  --network=chat-network \
+                  ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-mariadb
+                
+                
+                # redis 도커 실행
+                sudo docker rm -f redis
+                sudo docker run -d \
+                --name redis \
+                --memory=256m \
+                --restart=on-failure \
+                -v $(pwd)/redis/redis_data/:/data/ \
+                -v $(pwd)/redis/my-redis.conf:/usr/local/etc/redis/redis.conf \
+                --network=django-network \
+                ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-redis
+
+                echo "--------------------- spring-chat rebuild ---------------------------" 
+                sudo docker rm -f spring-chat
+                sudo docker run -d \
+                  --name spring-chat \
+                  --memory=256m \
+                  --restart=on-failure \
+                  --network=chat-network \
+                  ${{ vars.DOCKER_ID }}/${{ vars.PROJECT_NAME }}-spring-chat
+
+                # Docker Compose로 애플리케이션 빌드 및 실행
+                sleep 10
+                sudo docker system prune -af

@@ -36,6 +36,8 @@ spring.security.user.password={password}
 # 테스트 제외하고 빌드
 ./gradlew build -x test
 
+./gradlew clean build -x test
+
 ```
 
 ### gradle dependencies sync.
@@ -57,7 +59,7 @@ docker run -p 8080:8080 -d chat-spring -n chat-network
 
 docker compose up -d
 
-docker-compose up  -d --build
+
 
 docker-compose build --no-cache
 
